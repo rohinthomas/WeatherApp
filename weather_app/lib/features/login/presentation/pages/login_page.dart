@@ -1,45 +1,57 @@
 import 'package:flutter/material.dart';
-
+import 'package:sign_in_button/sign_in_button.dart';
+import 'package:weather_app/features/login/presentation/widget/googlesigninbutton.dart';
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    var screenWidth = MediaQuery.of(context).size.width;
+    var screenHeight = MediaQuery.of(context).size.height;
+    double textSizeHeading = screenWidth * 0.081;
+    double logoPadingTop=screenHeight*0.04;
+    double logoPadingBottom=screenHeight*0.01;
+    double textSizeBottom = screenWidth * 0.045;
+    double textPadingBottom=screenHeight*0.01;
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
           backgroundColor: Colors.black,
       ),
       body: Column(children: [
-        const Text("Discover The ",
+         Text("Discover The ",
                     style: TextStyle(
-                      fontSize: 35,
-                      color: Colors.white,
+                      fontSize: textSizeHeading,
+                      color: const Color.fromARGB(255, 255, 255, 255),
                       fontWeight: FontWeight.w800
                     ),),
-        const Text("Weather In Your City",
+        Text("Weather In Your City",
                     style: TextStyle(
-                      fontSize: 35,
+                      fontSize: textSizeHeading,
                       color: Colors.white,
                       fontWeight: FontWeight.w800
                     ),),            
         Center(
         child: Padding(
-          padding: const EdgeInsets.only(top: 40,bottom: 25),
+          padding:  EdgeInsets.only(top: logoPadingTop ,bottom: logoPadingBottom),
           child: Image.asset("images/logo.png",),
         ),
       ),
-      const Text("Get to know your weather maps and",
+       Text("Get to know your weather maps and",
         style: TextStyle(
-          fontSize: 20,
-          color: Color.fromARGB(255, 199, 199, 199),
+          fontSize: textSizeBottom,
+          color: const Color.fromARGB(255, 199, 199, 199),
         ),
       ),
-      const Text("radar precipitation forecast",
+       Text("radar precipitation forecast",
         style: TextStyle(
-          fontSize: 20,
-          color:Color.fromARGB(255, 199, 199, 199),
+          fontSize: textSizeBottom,
+          color:const Color.fromARGB(255, 199, 199, 199),
         ),
+      ),
+      Padding(
+        padding:  EdgeInsets.only(top: textPadingBottom),
+        child: const Googlesigninbutton(),
       )
       ],)
       
