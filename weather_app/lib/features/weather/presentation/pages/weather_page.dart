@@ -18,6 +18,8 @@ class WeatherPage extends StatelessWidget {
         backgroundColor:const Color.fromARGB(255, 0, 0, 0),
         
       ),
+      backgroundColor: Colors.black,
+
     );
   }
 }

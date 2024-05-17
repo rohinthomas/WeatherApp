@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:sign_in_button/sign_in_button.dart';
 import 'package:weather_app/features/login/presentation/widget/googlesigninbutton.dart';
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
-
   @override
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
@@ -51,7 +49,7 @@ class LoginPage extends StatelessWidget {
       ),
       Padding(
         padding:  EdgeInsets.only(top: textPadingBottom),
-        child: const Googlesigninbutton(),
+        child: const GoogleSignInButton(),
       )
       ],)
       
