@@ -1,17 +1,19 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:weather_app/features/search/data/api_/weather_get_api.dart';
 import 'package:weather_app/logout.dart';
 
 class SearchPage extends StatefulWidget {
-  const SearchPage({Key? key}) : super(key: key);
+  const SearchPage({super.key});
 
   @override
-  _SearchPageState createState() => _SearchPageState();
+  SearchPageState createState() => SearchPageState();
 }
 
-class _SearchPageState extends State<SearchPage> {
-  TextEditingController textController = TextEditingController(text: "search");
+class SearchPageState extends State<SearchPage> {
+  TextEditingController textController = TextEditingController();
   String? searchValue;
 
   @override
@@ -47,10 +49,13 @@ class _SearchPageState extends State<SearchPage> {
               child: CupertinoSearchTextField(
                 backgroundColor: Colors.grey[300],
                 controller: textController,
-                onChanged: (value) {
-                  setState(() {
+                onSubmitted:(value){
+                   setState(() {
                     searchValue = value;
-                  });
+                    // WeatherGetApi(
+                    //   Dio()
+                    // ).
+                });  
                 },
               ),
             ),
