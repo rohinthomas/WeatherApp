@@ -69,6 +69,15 @@ flutter:
   assets:
    - images/login_page_icon.png
    - images/logo.png
+   - images/Cloudy.json
+   - images/Heavy rain and thunder.json
+   - images/light cloud morning.json
+   - images/Morning light rain.json
+   - images/snowfall.json
+   - images/Sunny.json
+   
+
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

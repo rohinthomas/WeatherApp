@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 
 class WeatherGetApi {
   final Dio dio;
@@ -7,14 +8,15 @@ class WeatherGetApi {
 
   WeatherGetApi(this.dio);
 
-  Future<Response> fetchData() async {
+  Future<Map<String,dynamic>> fetchData() async {
     try {
       final response = await dio.get(apiUrl, queryParameters: {
         "key": apiKey,
         "q": "Kottayam",
-        "days": "7"
+        "days": "3"
       });
-      return response;
+      debugPrint(response.toString());
+      return response.data;
     } catch (e) {
       throw Exception('Failed to fetch data: $e');
     }
