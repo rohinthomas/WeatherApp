@@ -55,7 +55,6 @@ class SearchPageState extends State<SearchPage> {
                   });
                   try {
                     final response = await WeatherGetApi(Dio()).fetchData(value);
-                    final responseData=response.toString();
                     if (response['location'] != null && response['location']['name'] != null && context.mounted) {
                       // final locationName = response['location']['name'];
                       showModalBottomSheet(

@@ -43,6 +43,7 @@ dependencies:
   easy_search_bar: ^2.5.0
   dio: ^5.4.3+1
   lottie: ^3.1.2
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:
@@ -71,11 +72,13 @@ flutter:
    - images/login_page_icon.png
    - images/logo.png
    - images/Cloudy.json
-   - images/Heavy rain and thunder.json
+   - images/rainThunder.png
    - images/light cloud morning.json
-   - images/Morning light rain.json
+   - images/rain.png
    - images/snowfall.json
-   - images/Sunny.json
+   - images/sunny.png
+   - images/cloudy.png
+   - images/thunder.png
    
 
 
