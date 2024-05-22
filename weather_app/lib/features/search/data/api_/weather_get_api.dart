@@ -13,7 +13,7 @@ class WeatherGetApi {
       final response = await dio.get(apiUrl, queryParameters: {
         "key": apiKey,
         "q": value,
-        "days": "3"
+        "days": "10"
       });
       debugPrint(response.toString());
       return response.data;

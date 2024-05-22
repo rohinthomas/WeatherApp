@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:weather_app/features/weather/presentation/widget/future_weather_card.dart';
 import 'package:weather_app/features/weather/presentation/widget/hour_card.dart';
 
 class WeatherUi extends StatelessWidget {
@@ -8,10 +9,16 @@ class WeatherUi extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Safely parse the weather list from the response
     List<Map<String, dynamic>> weatherList = List<Map<String, dynamic>>.from(response['forecast']['forecastday'][0]['hour']);
+    List<Map<String, dynamic>> forecastList = List<Map<String, dynamic>>.from(response['forecast']['forecastday']);
+    
     var screenWidth = MediaQuery.of(context).size.width;
     var screenHeight = MediaQuery.of(context).size.height;
-    double timeLogoSize= screenWidth *0.04;
+    double timeLogoSize = screenWidth * 0.04;
+    // final String uv=forecastList[0]['day']['uv'];
+
+    // Helper function to get weather condition image path
     String getWeatherCondition(String conditionCode) {
       switch (conditionCode) {
         case '1000': // sunny
@@ -67,73 +74,182 @@ class WeatherUi extends StatelessWidget {
           return "images/unknown_weather.png";
       }
     }
-    
+
+    String getUvInfo(var conditionUv){
+      switch(conditionUv){
+        case 0:
+        case 1:
+        case 2: return ("Low");
+        case 3:
+        case 4:
+        case 5: return ("Moderate");
+        case 6:
+        case 7: return ("High");
+        case 8:
+        case 9:
+        case 10: return ("Very High");
+        default : return("Extreme");
+
+
+      }
+    }
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
+      
       children: [
         AutoSizeText(
-          "${response['location']['name']}",
+          response['location']['name'] ?? 'Unknown Location',
           style: const TextStyle(
               color: Colors.white, fontSize: 30, fontWeight: FontWeight.w700),
         ),
         AutoSizeText(
-          " ${response['current']['temp_c']}\u00B0",
+          " ${response['current']['temp_c'] ?? 'N/A'}\u00B0",
           style: const TextStyle(
               color: Colors.white, fontSize: 60, fontWeight: FontWeight.w700),
         ),
         AutoSizeText(
-          "${response['current']['condition']['text']}",
+          response['current']['condition']['text'] ?? 'Unknown Condition',
           style: const TextStyle(
             color: Colors.white,
             fontSize: 22,
-            // fontWeight: FontWeight.w700
           ),
         ),
-        Image.asset(
-          getWeatherCondition(response['current']['condition']['code'].toString()),
-          width: screenWidth * 0.7,
-        ),
-        Card(
-          color: const Color.fromARGB(53, 32, 32, 32),
-          child: SizedBox(
-            width: screenWidth * 0.9,
-            height: screenHeight * 0.15,
-            child: Column(
-              
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
+        SizedBox(
+          height: screenHeight * 0.67,
+          child:Expanded(
+          child: ListView(
+            scrollDirection: Axis.vertical,
+            children: [
+              Image.asset(
+                getWeatherCondition(response['current']['condition']['code'].toString()),
+                height: screenWidth * 0.45,
+              ),
+              Card(
+                color: const Color.fromARGB(53, 32, 32, 32),
+                child: SizedBox(
+                  width: screenWidth * 0.9,
+                  height: screenHeight * 0.15,
+                  child: Column(
                     children: [
-                          Icon(Icons.access_time_outlined,color: Colors.white,size:timeLogoSize),
-                          const AutoSizeText("  HOURLY FORECAST",
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Icon(Icons.access_time_outlined, color: Colors.white, size: timeLogoSize),
+                            const AutoSizeText(
+                              "  HOURLY FORECAST",
                               style: TextStyle(
                                   color: Colors.white,
-                                  fontSize: 15, 
+                                  fontSize: 15,
                                   fontWeight: FontWeight.bold
-                                ),
-                                minFontSize: 5,
+                              ),
+                              minFontSize: 5,
                             )
                           ],
                         ),
-                ),
-                Expanded(
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: weatherList.length,
-                    itemBuilder: (context, index){
-                        return Hourcard(
-                          response:weatherList[index]
-                        );
-                    }
+                      ),
+                      Expanded(
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: weatherList.length,
+                          itemBuilder: (context, index) {
+                            return Hourcard(response: weatherList[index]);
+                          }
+                        ),
+                      ),
+                    ],   
                   ),
                 ),
-              ],
-            ),
-          ),
-        ),
+              ),
+              // 3 day weather forecast
+              Card(
+                color: const Color.fromARGB(53, 32, 32, 32),
+                child: SizedBox(
+                  width: screenWidth * 0.9,
+                  height: screenHeight * 0.3,
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            Icon(Icons.date_range, color: Colors.white, size: timeLogoSize),
+                            const AutoSizeText(
+                              "  10-DAY FORECAST",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold
+                              ),
+                              minFontSize: 5,
+                            )
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          child: Column(
+                            children: forecastList.map((weather) {
+                              return FutureWeatherCard(response: weather);
+                            }).toList(),
+                          ),
+                        ),
+                      )
+                    ],   
+                  ),
+                ),
+              ),
+              Row(
+                children: [
+                    Card(
+                      color: const Color.fromARGB(53, 32, 32, 32),
+                      child: SizedBox(
+                      width: screenWidth * 0.3,
+                      height: screenHeight * 0.13,
+                      child:Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(children: [
+                              Icon(Icons.sunny,color: Colors.white,size: timeLogoSize),
+                              const AutoSizeText(
+                              "  UV INDEX",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                              ),
+                              minFontSize: 5,
+                            )
+                            ],),
+                          ),
+                           AutoSizeText(
+                              "${response['forecast']['forecastday'][0]['day']['uv']}",
+                              style:const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 30,
+                              ),
+                              minFontSize: 5,
+                            ), 
+                            AutoSizeText(getUvInfo(response['forecast']['forecastday'][0]['day']['uv']),
+                              style:const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                              )  
+                            )
+                        ],
+                      ),
+                      ),
+                      
+                    )
+                  ],
+              )
+            ],
+          )
+        )
+        )
       ],
     );
   }
