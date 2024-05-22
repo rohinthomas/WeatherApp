@@ -8,11 +8,11 @@ class WeatherGetApi {
 
   WeatherGetApi(this.dio);
 
-  Future<Map<String,dynamic>> fetchData() async {
+  Future<Map<String,dynamic>> fetchData(value) async {
     try {
       final response = await dio.get(apiUrl, queryParameters: {
         "key": apiKey,
-        "q": "Kottayam",
+        "q": value,
         "days": "3"
       });
       debugPrint(response.toString());

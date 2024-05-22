@@ -1,12 +1,11 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:weather_app/features/weather/presentation/widget/weather_ui.dart';
 
 
 class ShowWeatherModal extends StatelessWidget {
-  final String locationName;
-  const ShowWeatherModal({super.key, required this.locationName});
+  final dynamic response;
+  const ShowWeatherModal({super.key, required this.response});
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +54,7 @@ class ShowWeatherModal extends StatelessWidget {
         ],
       ),
       // Text('"Weather in $locationName"',style: const TextStyle(color:Colors.white),),
-      const WeatherUi()
+      WeatherUi(response: response)
       ],
 
       )

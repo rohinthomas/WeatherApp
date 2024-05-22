@@ -54,15 +54,15 @@ class SearchPageState extends State<SearchPage> {
                     searchValue = value;
                   });
                   try {
-                    final response = await WeatherGetApi(Dio()).fetchData();
-
+                    final response = await WeatherGetApi(Dio()).fetchData(value);
+                    final responseData=response.toString();
                     if (response['location'] != null && response['location']['name'] != null && context.mounted) {
-                      final locationName = response['location']['name'];
+                      // final locationName = response['location']['name'];
                       showModalBottomSheet(
                         context: context,
                         isScrollControlled: true,
                         builder: (BuildContext context) {
-                          return ShowWeatherModal(locationName: locationName);
+                          return ShowWeatherModal(response: response);
                         },
                       );
                     }
