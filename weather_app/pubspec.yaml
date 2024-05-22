@@ -71,11 +71,8 @@ flutter:
   assets:
    - images/login_page_icon.png
    - images/logo.png
-   - images/Cloudy.json
    - images/rainThunder.png
-   - images/light cloud morning.json
    - images/rain.png
-   - images/snowfall.json
    - images/sunny.png
    - images/cloudy.png
    - images/thunder.png
