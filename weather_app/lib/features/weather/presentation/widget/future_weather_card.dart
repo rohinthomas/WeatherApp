@@ -15,13 +15,13 @@ class FutureWeatherCard extends StatelessWidget {
     final dayFormatter = DateFormat('EEEE');
     final day=dayFormatter.format(dateTime);
     return  Padding(
-      padding: const EdgeInsets.all(7.0),
+      padding: const EdgeInsets.only(top: 6),
       
       child: Container(
         color: const Color.fromARGB(0, 255, 255, 255),
         child: SizedBox(
               width:screenWidth *0.9,
-              height: screenHeight *0.045,             
+              height: screenHeight *0.06,             
               child:Column(
                   mainAxisAlignment:MainAxisAlignment.center,
                   children: [
@@ -32,8 +32,19 @@ class FutureWeatherCard extends StatelessWidget {
                               fontSize: 15, 
                       ),),
                         Row(children: [
+                          Column(children: [
                           Image.network("https:${response['day']['condition']['icon']}",width: screenHeight * 0.04,),
-                          AutoSizeText("  ${response['day']['avgtemp_c']}",style:const TextStyle(color: Colors.white,
+                          if (response['day']['daily_chance_of_rain'] != 0)
+                          AutoSizeText(
+                            "${response['day']['daily_chance_of_rain']}%",
+                            style: const TextStyle(
+                              color: Color.fromARGB(255, 0, 174, 255),
+                              fontSize: 10,
+                            ),
+                          ),
+
+                          ],),
+                          AutoSizeText("  ${response['day']['avgtemp_c']}\u00B0",style:const TextStyle(color: Colors.white,
                               fontSize: 15, 
                       ),
                       )

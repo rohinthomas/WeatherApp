@@ -1,7 +1,10 @@
+import 'dart:math';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:weather_app/features/weather/presentation/widget/future_weather_card.dart';
 import 'package:weather_app/features/weather/presentation/widget/hour_card.dart';
+import 'package:weather_icons/weather_icons.dart';
 
 class WeatherUi extends StatelessWidget {
   final dynamic response;
@@ -9,14 +12,14 @@ class WeatherUi extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Safely parse the weather list from the response
-    List<Map<String, dynamic>> weatherList = List<Map<String, dynamic>>.from(response['forecast']['forecastday'][0]['hour']);
-    List<Map<String, dynamic>> forecastList = List<Map<String, dynamic>>.from(response['forecast']['forecastday']);
-    
+    List<Map<String, dynamic>> weatherList = List<Map<String, dynamic>>.from(
+        response['forecast']['forecastday'][0]['hour']);
+    List<Map<String, dynamic>> forecastList =
+        List<Map<String, dynamic>>.from(response['forecast']['forecastday']);
+
     var screenWidth = MediaQuery.of(context).size.width;
     var screenHeight = MediaQuery.of(context).size.height;
     double timeLogoSize = screenWidth * 0.04;
-    // final String uv=forecastList[0]['day']['uv'];
 
     // Helper function to get weather condition image path
     String getWeatherCondition(String conditionCode) {
@@ -75,28 +78,63 @@ class WeatherUi extends StatelessWidget {
       }
     }
 
-    String getUvInfo(var conditionUv){
-      switch(conditionUv){
+    String getUvInfo(var conditionUv) {
+      switch (conditionUv) {
         case 0:
         case 1:
-        case 2: return ("Low");
+        case 2:
+          return ("Low");
         case 3:
         case 4:
-        case 5: return ("Moderate");
+        case 5:
+          return ("Moderate");
         case 6:
-        case 7: return ("High");
+        case 7:
+          return ("High");
         case 8:
         case 9:
-        case 10: return ("Very High");
-        default : return("Extreme");
-
-
+        case 10:
+          return ("Very High");
+        default:
+          return ("Extreme");
       }
+    }
+
+    String calculateVisibility(String visibility){
+        double vis=double.parse(visibility);
+        switch(vis){
+          case >10:
+               return "Clear";
+          case >5:
+               return "Good";
+          case >1:
+               return "Moderate";
+          case <1:
+               return "Very Poor";    
+          default: return "";                
+        }
+
+    }
+
+    String calculateDewPoint(var temperature, var humidity) {
+      // Constants for the formula
+
+      double temp = double.parse(temperature);
+      double hum = double.parse(humidity);
+      const double a = 17.27;
+      const double b = 237.7;
+
+      // Calculate the alpha value
+      double alpha = ((a * temp) / (b + temp)) + log(hum / 100);
+
+      // Calculate the dew point
+      double dewPoint = (b * alpha) / (a - alpha);
+
+      return dewPoint.toStringAsFixed(2);
     }
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      
       children: [
         AutoSizeText(
           response['location']['name'] ?? 'Unknown Location',
@@ -115,140 +153,446 @@ class WeatherUi extends StatelessWidget {
             fontSize: 22,
           ),
         ),
-        SizedBox(
-          height: screenHeight * 0.67,
-          child:Expanded(
-          child: ListView(
-            scrollDirection: Axis.vertical,
-            children: [
-              Image.asset(
-                getWeatherCondition(response['current']['condition']['code'].toString()),
-                height: screenWidth * 0.45,
-              ),
-              Card(
-                color: const Color.fromARGB(53, 32, 32, 32),
-                child: SizedBox(
-                  width: screenWidth * 0.9,
-                  height: screenHeight * 0.15,
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Icon(Icons.access_time_outlined, color: Colors.white, size: timeLogoSize),
-                            const AutoSizeText(
-                              "  HOURLY FORECAST",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold
-                              ),
-                              minFontSize: 5,
-                            )
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: weatherList.length,
-                          itemBuilder: (context, index) {
-                            return Hourcard(response: weatherList[index]);
-                          }
-                        ),
-                      ),
-                    ],   
-                  ),
-                ),
-              ),
-              // 3 day weather forecast
-              Card(
-                color: const Color.fromARGB(53, 32, 32, 32),
-                child: SizedBox(
-                  width: screenWidth * 0.9,
-                  height: screenHeight * 0.3,
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Icon(Icons.date_range, color: Colors.white, size: timeLogoSize),
-                            const AutoSizeText(
-                              "  10-DAY FORECAST",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold
-                              ),
-                              minFontSize: 5,
-                            )
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        child: SingleChildScrollView(
-                          child: Column(
-                            children: forecastList.map((weather) {
-                              return FutureWeatherCard(response: weather);
-                            }).toList(),
-                          ),
-                        ),
-                      )
-                    ],   
-                  ),
-                ),
-              ),
-              Row(
+        Padding(
+          padding: const EdgeInsets.only(top:8,bottom: 15),
+          child: SizedBox(
+              height: screenHeight * 0.67,
+              child: Expanded(
+                  child: ListView(
+                scrollDirection: Axis.vertical,
                 children: [
-                    Card(
-                      color: const Color.fromARGB(53, 32, 32, 32),
-                      child: SizedBox(
-                      width: screenWidth * 0.3,
-                      height: screenHeight * 0.13,
-                      child:Column(
+                  Image.asset(
+                    getWeatherCondition(
+                        response['current']['condition']['code'].toString()),
+                    height: screenWidth * 0.45,
+                  ),
+                  Card(
+                    color: const Color.fromARGB(53, 32, 32, 32),
+                    child: SizedBox(
+                      width: screenWidth * 0.9,
+                      height: screenHeight * 0.15,
+                      child: Column(
                         children: [
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Row(children: [
-                              Icon(Icons.sunny,color: Colors.white,size: timeLogoSize),
-                              const AutoSizeText(
-                              "  UV INDEX",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 15,
-                              ),
-                              minFontSize: 5,
-                            )
-                            ],),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Icon(Icons.access_time_outlined,
+                                    color: Colors.white, size: timeLogoSize),
+                                const AutoSizeText(
+                                  "  HOURLY FORECAST",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold),
+                                  minFontSize: 5,
+                                )
+                              ],
+                            ),
                           ),
-                           AutoSizeText(
-                              "${response['forecast']['forecastday'][0]['day']['uv']}",
-                              style:const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 30,
-                              ),
-                              minFontSize: 5,
-                            ), 
-                            AutoSizeText(getUvInfo(response['forecast']['forecastday'][0]['day']['uv']),
-                              style:const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                              )  
-                            )
+                          Expanded(
+                            child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: weatherList.length,
+                                itemBuilder: (context, index) {
+                                  return Hourcard(response: weatherList[index]);
+                                }),
+                          ),
                         ],
                       ),
+                    ),
+                  ),
+                  // 3 day weather forecast
+                  Card(
+                    color: const Color.fromARGB(53, 32, 32, 32),
+                    child: SizedBox(
+                      width: screenWidth * 0.9,
+                      height: screenHeight * 0.3,
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Icon(Icons.date_range,
+                                    color: Colors.white, size: timeLogoSize),
+                                const AutoSizeText(
+                                  "  10-DAY FORECAST",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold),
+                                  minFontSize: 5,
+                                )
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: SingleChildScrollView(
+                              child: Column(
+                                children: forecastList.map((weather) {
+                                  return FutureWeatherCard(response: weather);
+                                }).toList(),
+                              ),
+                            ),
+                          )
+                        ],
                       ),
-                      
-                    )
-                  ],
-              )
-            ],
-          )
-        )
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Card(
+                        color: const Color.fromARGB(53, 32, 32, 32),
+                        child: SizedBox(
+                          width: screenWidth * 0.3133,
+                          height: screenHeight * 0.13,
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.sunny,
+                                        color: Colors.white, size: timeLogoSize),
+                                    const AutoSizeText(
+                                      "  UV INDEX",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 15,
+                                      ),
+                                      minFontSize: 5,
+                                    )
+                                  ],
+                                ),
+                              ),
+                              AutoSizeText(
+                                "${response['forecast']['forecastday'][0]['day']['uv']}",
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 30,
+                                ),
+                                minFontSize: 5,
+                              ),
+                              AutoSizeText(
+                                  getUvInfo(response['forecast']['forecastday'][0]
+                                      ['day']['uv']),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 15,
+                                  ))
+                            ],
+                          ),
+                        ),
+                      ),
+                      //himidity
+                      Card(
+                        color: const Color.fromARGB(53, 32, 32, 32),
+                        child: SizedBox(
+                          width: screenWidth * 0.3133,
+                          height: screenHeight * 0.13,
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  children: [
+                                    Icon(WeatherIcons.humidity,
+                                        color: Colors.white,
+                                        size: screenWidth * 0.034),
+                                    const AutoSizeText(
+                                      "  HUMIDITY",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 15,
+                                      ),
+                                      minFontSize: 5,
+                                    )
+                                  ],
+                                ),
+                              ),
+                              AutoSizeText(
+                                "${response['current']['humidity']}%",
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 30,
+                                ),
+                                minFontSize: 5,
+                              ),
+                              AutoSizeText(
+                                  "Dew Point ${calculateDewPoint(response['current']['temp_c'].toString(), response['current']['humidity'].toString())}\u00B0",
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 15,
+                                  ))
+                            ],
+                          ),
+                        ),
+                      ),
+                      //feels like
+                      Card(
+                        color: const Color.fromARGB(53, 32, 32, 32),
+                        child: SizedBox(
+                          width: screenWidth * 0.3133,
+                          height: screenHeight * 0.13,
+                          child: Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  children: [
+                                    Icon(WeatherIcons.thermometer_exterior,
+                                        color: Colors.white,
+                                        size: screenWidth * 0.034),
+                                    const AutoSizeText(
+                                      "  FEELS LIKE",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 15,
+                                      ),
+                                      minFontSize: 5,
+                                    )
+                                  ],
+                                ),
+                              ),
+                              AutoSizeText(
+                                "${response['current']['feelslike_c']}\u00B0",
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 30,
+                                ),
+                                minFontSize: 5,
+                              ),
+                              const AutoSizeText("Apparerent temp",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 15,
+                                  ))
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Card(
+                    color: const Color.fromARGB(53, 32, 32, 32),
+                    child: SizedBox(
+                      width: screenWidth * 0.3133,
+                      height: screenHeight * 0.13,
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              children: [
+                                Icon(WeatherIcons.windy,
+                                    color: Colors.white,
+                                    size: screenWidth * 0.034),
+                                const AutoSizeText(
+                                  "  WIND",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 15,
+                                  ),
+                                  minFontSize: 5,
+                                )
+                              ],
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              AutoSizeText(
+                                "  ${response['current']['wind_kph']}",
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 40,
+                                ),
+                                minFontSize: 5,
+                              ),
+                              const Row(
+                                children: [
+                                  Column(
+                                    children: [
+                                      AutoSizeText(
+                                        "KPH",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 15,
+                                        ),
+                                        minFontSize: 5,
+                                      ),
+                                      AutoSizeText(
+                                        "Wind",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 15,
+                                        ),
+                                        minFontSize: 5,
+                                      )
+                                    ],
+                                  )
+                                ],
+                              ),
+                              AutoSizeText(
+                                "  ${response['current']['gust_kph']}",
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 40,
+                                ),
+                                minFontSize: 5,
+                              ),
+                              const Row(
+                                children: [
+                                  Column(
+                                    children: [
+                                      AutoSizeText(
+                                        "KPH",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 15,
+                                        ),
+                                        minFontSize: 5,
+                                      ),
+                                      AutoSizeText(
+                                        "Gusts",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 15,
+                                        ),
+                                        minFontSize: 5,
+                                      )
+                                    ],
+                                  )
+                                ],
+                              ),
+                              AutoSizeText(
+                                "  ${response['current']['wind_degree']}\u00B0",
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 40,
+                                ),
+                                minFontSize: 5,
+                              ),
+                              Row(
+                                children: [
+                                  Column(
+                                    children: [
+                                      const AutoSizeText(
+                                        "",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 15,
+                                        ),
+                                        minFontSize: 5,
+                                      ),
+                                      AutoSizeText(
+                                        "${response['current']['wind_dir']}",
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 15,
+                                        ),
+                                        minFontSize: 5,
+                                      )
+                                    ],
+                                  )
+                                ],
+                              )
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                  Row(
+                  children: [
+                      Card(
+                        color: const Color.fromARGB(53, 32, 32, 32),
+                        child: SizedBox(
+                        width: screenWidth * 0.48,
+                        height: screenHeight * 0.13,
+                        child:Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(children: [
+                                Icon(WeatherIcons.raindrop,color: Colors.white,size: timeLogoSize),
+                                const AutoSizeText(
+                                "  RAIN FALL",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 15,
+                                ),
+                                minFontSize: 5,
+                              )
+                              ],),
+                            ),
+                             AutoSizeText(
+                                "${response['current']['precip_mm']} mm",
+                                style:const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 30,
+                                ),
+                                minFontSize: 5,
+                              ), 
+                              const AutoSizeText("in last 24hr",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 15,
+                                )  
+                              )
+                          ],
+                        ),
+                        ),
+                        
+                      ),
+                      //himidity
+                      Card(
+                        color: const Color.fromARGB(53, 32, 32, 32),
+                        child: SizedBox(
+                        width: screenWidth * 0.48,
+                        height: screenHeight * 0.13,
+                        child:Column(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(children: [
+                                
+                                Icon(Icons.remove_red_eye,color: Colors.white,size: screenWidth * 0.034),
+                                const AutoSizeText(
+                                "  VISIBILITY",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 15,
+                                ),
+                                minFontSize: 5,
+                              )
+                              ],),
+                            ),
+                             AutoSizeText(
+                                "${response['current']['vis_km']} km",
+                                style:const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 30,
+                                ),
+                                minFontSize: 5,
+                              ), 
+                              AutoSizeText(calculateVisibility(response['current']['vis_km'].toString()),
+                                style:const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 15,
+                                )  
+                              )
+                          ],
+                        ),
+                        ),
+                        
+                      ),
+                    ],                   
+                ),
+                ],
+              ))),
         )
       ],
     );

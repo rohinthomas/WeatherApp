@@ -42,4 +42,6 @@
             <data android:mimeType="text/plain"/>
         </intent>
     </queries>
+    <!-- Either 'coarse' or 'fine' location permission is needed -->
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 </manifest>

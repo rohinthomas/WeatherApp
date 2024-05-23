@@ -4,15 +4,15 @@ import 'package:flutter/material.dart';
 import 'package:weather_app/features/login/data/googlesignin.dart';
 import 'package:weather_app/features/weather/presentation/pages/weather_page.dart';
 class GoogleSignInButton extends StatefulWidget {
-  const GoogleSignInButton({Key? key}) : super(key: key);
+  const GoogleSignInButton({super.key});
 
   @override
-  _GoogleSignInButtonState createState() => _GoogleSignInButtonState();
+  GoogleSignInButtonState createState() => GoogleSignInButtonState();
 }
 
-class _GoogleSignInButtonState extends State<GoogleSignInButton> {
+class GoogleSignInButtonState extends State<GoogleSignInButton> {
 
-  void _showButtonPressDialog(BuildContext context, String provider) {
+  void showButtonPressDialog(BuildContext context, String provider) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('$provider Button Pressed!'),
