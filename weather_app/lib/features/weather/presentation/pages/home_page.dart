@@ -65,7 +65,7 @@ void fetchDataAndShowModal() async {
                   onTap: () {
                     Navigator.pushReplacement(
                       context,
-                      MaterialPageRoute(builder: (context) => const SearchPage()),
+                      MaterialPageRoute(builder: (context) => SearchPage(city:data['location']['name'].toString(),condition:data['current']['condition']['text'].toString(),degree:data['current']['temp_c'].toString(),image:data['current']['condition']['icon'].toString())),
                     );
                   },
                   child: const Icon(Icons.search_outlined, color: Colors.white),

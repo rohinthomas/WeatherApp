@@ -407,7 +407,7 @@ class WeatherUi extends StatelessWidget {
                                 "  ${response['current']['wind_kph']}",
                                 style: const TextStyle(
                                   color: Colors.white,
-                                  fontSize: 40,
+                                  fontSize: 38,
                                 ),
                                 minFontSize: 5,
                               ),
@@ -439,7 +439,7 @@ class WeatherUi extends StatelessWidget {
                                 "  ${response['current']['gust_kph']}",
                                 style: const TextStyle(
                                   color: Colors.white,
-                                  fontSize: 40,
+                                  fontSize: 38,
                                 ),
                                 minFontSize: 5,
                               ),
@@ -471,7 +471,7 @@ class WeatherUi extends StatelessWidget {
                                 "  ${response['current']['wind_degree']}\u00B0",
                                 style: const TextStyle(
                                   color: Colors.white,
-                                  fontSize: 40,
+                                  fontSize: 38,
                                 ),
                                 minFontSize: 5,
                               ),
