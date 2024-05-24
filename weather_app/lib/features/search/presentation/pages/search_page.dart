@@ -16,9 +16,11 @@ class SearchPage extends StatefulWidget {
 class SearchPageState extends State<SearchPage> {
   TextEditingController textController = TextEditingController();
   String? searchValue;
+  dynamic searchSuggestions = [];
 
   @override
   Widget build(BuildContext context) {
+    bool flg = true;
     var screenHeight = MediaQuery.of(context).size.height;
     double searchPaddingTop = screenHeight * 0.0015;
     return Scaffold(
@@ -49,13 +51,33 @@ class SearchPageState extends State<SearchPage> {
               child: CupertinoSearchTextField(
                 backgroundColor: Colors.grey[300],
                 controller: textController,
+                onChanged: (value) async {
+                  if (value.length >= 3 && flg == true) {
+                    flg = false;
+                    try {
+                      final response =
+                          await SearchApi(Dio()).fetchDataSearch(value);
+                      setState(() {
+                        searchSuggestions =
+                            response; // Update search suggestions list
+                      });
+                    } catch (e) {
+                      print(e);
+                    } finally {
+                      flg = true; // Reset flg to true
+                    }
+                  }
+                },
                 onSubmitted: (value) async {
                   setState(() {
                     searchValue = value;
                   });
                   try {
-                    final response = await WeatherGetApi(Dio()).fetchData(value);
-                    if (response['location'] != null && response['location']['name'] != null && context.mounted) {
+                    final response =
+                        await WeatherGetApi(Dio()).fetchData(value);
+                    if (response['location'] != null &&
+                        response['location']['name'] != null &&
+                        context.mounted) {
                       // final locationName = response['location']['name'];
                       showModalBottomSheet(
                         context: context,
@@ -70,6 +92,23 @@ class SearchPageState extends State<SearchPage> {
                   }
                 },
               ),
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: searchSuggestions.length,
+              itemBuilder: (context, index) {
+                final suggestion = searchSuggestions[index];
+                return ListTile(
+                  title: Text(
+                    "${suggestion['name']}${suggestion['region']}${suggestion['country']}",
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  onTap: () {
+                    // Handle suggestion tapped
+                  },
+                );
+              },
             ),
           ),
         ],
