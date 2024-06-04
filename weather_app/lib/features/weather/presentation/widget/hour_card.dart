@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class Hourcard extends StatelessWidget {
   final dynamic response;
@@ -28,7 +29,10 @@ class Hourcard extends StatelessWidget {
                       ),
                       minFontSize: 5,
                     ),
-                    Image.network("https:${response['condition']['icon']}",width: screenWidth * 0.1,),
+                    Image.network(
+                      errorBuilder: (context, error, stackTrace) =>
+                      Image(image:MemoryImage(kTransparentImage)) 
+                      ,"https:${response['condition']['icon']}",width: screenWidth * 0.1,),
                     AutoSizeText(" ${response['temp_c']}\u00B0",
                       style: const TextStyle(color:Colors.white,
                            fontSize: 15,

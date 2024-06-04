@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class FutureWeatherCard extends StatelessWidget {
   final dynamic response;
@@ -21,7 +22,7 @@ class FutureWeatherCard extends StatelessWidget {
         color: const Color.fromARGB(0, 255, 255, 255),
         child: SizedBox(
               width:screenWidth *0.9,
-              height: screenHeight *0.06,             
+              height: screenHeight *0.07,             
               child:Column(
                   mainAxisAlignment:MainAxisAlignment.center,
                   children: [
@@ -33,7 +34,10 @@ class FutureWeatherCard extends StatelessWidget {
                       ),),
                         Row(children: [
                           Column(children: [
-                          Image.network("https:${response['day']['condition']['icon']}",width: screenHeight * 0.04,),
+                          Image.network(
+                            errorBuilder: (context, error, stackTrace) =>
+                      Image(image:MemoryImage(kTransparentImage)) 
+                            ,"https:${response['day']['condition']['icon']}",width: screenHeight * 0.04,),
                           if (response['day']['daily_chance_of_rain'] != 0)
                           AutoSizeText(
                             "${response['day']['daily_chance_of_rain']}%",

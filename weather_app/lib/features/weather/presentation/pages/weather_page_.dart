@@ -1,7 +1,7 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:weather_app/features/search/data/api_/weather_get_api.dart';
 import 'package:weather_app/features/search/presentation/pages/search_page.dart';
-import 'package:weather_app/features/weather/domain/location.dart';
 import 'package:weather_app/features/weather/presentation/widget/weather_ui.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dio/dio.dart';
@@ -9,7 +9,7 @@ import 'package:weather_app/logout.dart';
 
 class WeatherPageCity extends StatefulWidget {
   final String location;
-  const WeatherPageCity({super.key,required this.location});
+  const WeatherPageCity({super.key, required this.location});
 
   @override
   WeatherPageState createState() => WeatherPageState();
@@ -17,30 +17,45 @@ class WeatherPageCity extends StatefulWidget {
 
 class WeatherPageState extends State<WeatherPageCity> {
   dynamic data;
+  Timer? _timer;
 
   @override
-  void initState() {
-    super.initState();
+ void initState() {
+  super.initState();
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    // Your initialization code here
     fetchDataAndShowModal();
-  }
-
-void fetchDataAndShowModal() async {
-  try {
-    Map<String, dynamic> data = await WeatherGetApi(Dio()).fetchData(widget.location);
-   
-    // Check if the data is valid and the widget is still mounted
-    if (data['location'] != null && data['location']['name'] != null && context.mounted) {
-      // Update the state with the fetched data
-      setState(() {
-        this.data = data;
-      });
-    }
-  } catch (error) {
-    // Handle error
-    print('Error fetching weather data: $error');
-  }
+    setUpTimedFetch();
+  });
 }
 
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void setUpTimedFetch() {
+    // Set up a periodic timer to fetch data every 5 seconds
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      fetchDataAndShowModal();
+    });
+  }
+
+  Future<void> fetchDataAndShowModal() async {
+    try {
+      // Fetch weather data for the given location
+      Map<String, dynamic> data = await WeatherGetApi(Dio()).fetchData(widget.location);
+      // If valid data is returned, update the state
+      if (data['location'] != null && data['location']['name'] != null && mounted) {
+        setState(() {
+          this.data = data;
+        });
+      }
+    } catch (error) {
+      print('Error fetching weather data: $error');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,10 +71,19 @@ void fetchDataAndShowModal() async {
                 alignment: Alignment.topLeft,
                 child: GestureDetector(
                   onTap: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => SearchPage(city:data['location']['name'].toString(),condition:data['current']['condition']['text'].toString(),degree:data['current']['temp_c'].toString(),image:data['current']['condition']['icon'].toString())),
-                    );
+                    if (data != null) {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SearchPage(
+                            city: data['location']['name'].toString(),
+                            condition: data['current']['condition']['text'].toString(),
+                            degree: data['current']['temp_c'].toString(),
+                            image: data['current']['condition']['icon'].toString(),
+                          ),
+                        ),
+                      );
+                    }
                   },
                   child: const Icon(Icons.search_outlined, color: Colors.white),
                 ),
