@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:weather_app/features/search/data/api_/weather_get_api.dart';
-import 'package:weather_app/features/search/presentation/pages/search_page.dart';
 import 'package:weather_app/features/weather/domain/location.dart';
 import 'package:weather_app/features/weather/presentation/widget/weather_ui.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dio/dio.dart';
 import 'package:weather_app/logout.dart';
-import 'package:weather_app/search_page_route.dart';
+
 
 class WeatherPage extends StatefulWidget {
   const WeatherPage({super.key});
@@ -68,39 +67,12 @@ class WeatherPageState extends State<WeatherPage> {
                 child: GestureDetector(
                   onTap: () {
                     if (data != null) {
-                      // final dynamic param = {
-                      //   "city": data['location']['name'].toString(),
-                      //   "condition":
-                      //       data['current']['condition']['text'].toString(),
-                      //   "degree": data['current']['temp_c'].toString(),
-                      //   "image":
-                      //       data['current']['condition']['icon'].toString(),
-                      // };
-                      // context.go(Uri(path: '/search', queryParameters: param)
-                      //     .toString());
-
-                      // Navigator.of(context).pushReplacement(
-                      //   MaterialPageRoute(
-                      //     builder: (BuildContext context) {
-                      //       return SearchPage(city:data['location']['name'].toString(),
-                      //       condition: data['current']['condition']['text'].toString(),
-                      //       degree:  data['current']['temp_c'].toString(),
-                      //       image: data['current']['condition']['icon'].toString(),
-                      //       );
-
-                      //     },
-                      //   ),
-                      // );
-                      // final String cityName=data['location']['name'].toString();
-    
-                      
-                      context.go(SearchPageRoute(
-                        city: data['location']['name'].toString(),
-                        condition:
+                      context.goNamed('search', pathParameters:{'cityname': data['location']['name'].toString(),
+                        'conditn':
                             data['current']['condition']['text'].toString(),
-                        degree: data['current']['temp_c'].toString(),
-                        image: data['current']['condition']['icon'].toString(),
-                      ).toString());
+                        "deg": data['current']['temp_c'].toString(),
+                        "img":
+                            data['current']['condition']['icon'].toString()});
                     } else {
                       // Handle case when data is null
                       print("null null!!!!");
