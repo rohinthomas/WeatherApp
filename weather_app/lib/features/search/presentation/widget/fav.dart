@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:transparent_image/transparent_image.dart';
 import 'package:weather_app/features/search/presentation/widget/fav_city.dart';
 
 
@@ -20,9 +21,7 @@ class FavCity extends StatelessWidget {
   Widget build(BuildContext context) {
     var screenWidth = MediaQuery.of(context).size.width;
     var screenHeight = MediaQuery.of(context).size.height;
-    return FractionallySizedBox(
-      // heightFactor: MediaQuery.of(context).size.height *0.05,
-      
+    return FractionallySizedBox(      
       child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           mainAxisSize: MainAxisSize.max,
@@ -107,6 +106,8 @@ class FavCity extends StatelessWidget {
                                                     fontWeight: FontWeight.w500),
                                               ),
                                               Image.network(
+                                                errorBuilder: (context, error, stackTrace) =>
+                                                Image(image:MemoryImage(kTransparentImage)), 
                                                 "https:$image",
                                                 width: screenWidth * 0.1,
                                               ),

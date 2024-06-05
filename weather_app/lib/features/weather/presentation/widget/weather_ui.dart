@@ -159,9 +159,9 @@ class WeatherUi extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(top: 8, bottom: 15),
+            padding: const EdgeInsets.only(top: 8,),
             child: SizedBox(
-                height: screenHeight * 0.611,
+                height: screenHeight * 0.67,
                 child: Expanded(
                     child: ListView(
                   scrollDirection: Axis.vertical,
@@ -252,6 +252,7 @@ class WeatherUi extends StatelessWidget {
                     ),
                     FractionallySizedBox(
                       child: Row(
+                        
                         children: [
                           Card(
                             color: const Color.fromARGB(53, 32, 32, 32),
@@ -259,6 +260,7 @@ class WeatherUi extends StatelessWidget {
                               width: screenWidth * 0.3133,
                               height: screenHeight * 0.165,
                               child: Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
                                 children: [
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
@@ -307,6 +309,8 @@ class WeatherUi extends StatelessWidget {
                               width: screenWidth * 0.3133,
                               height: screenHeight * 0.165,
                               child: Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+
                                 children: [
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
@@ -351,9 +355,11 @@ class WeatherUi extends StatelessWidget {
                           Card(
                             color: const Color.fromARGB(53, 32, 32, 32),
                             child: SizedBox(
-                              width: screenWidth * 0.305,
+                              width: screenWidth * 0.3094,
                               height: screenHeight * 0.165,
                               child: Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+
                                 children: [
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
@@ -402,10 +408,13 @@ class WeatherUi extends StatelessWidget {
                         width: screenWidth * 0133,
                         height: screenHeight * 0.14,
                         child: Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+
                           children: [
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Row(
+                                
                                 children: [
                                   Icon(WeatherIcons.windy,
                                       color: Colors.white,
@@ -525,6 +534,7 @@ class WeatherUi extends StatelessWidget {
                                   Row(
                                     children: [
                                       Column(
+                                        
                                         children: [
                                           const AutoSizeText(
                                             "",
@@ -561,8 +571,10 @@ class WeatherUi extends StatelessWidget {
                           color: const Color.fromARGB(53, 32, 32, 32),
                           child: SizedBox(
                             width: screenWidth * 0.48,
-                            height: screenHeight * 0.18,
+                            height: screenHeight * 0.16,
                             child: Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
@@ -607,8 +619,10 @@ class WeatherUi extends StatelessWidget {
                           color: const Color.fromARGB(53, 32, 32, 32),
                           child: SizedBox(
                             width: screenWidth * 0.475,
-                            height: screenHeight * 0.18,
+                            height: screenHeight * 0.16,
                             child: Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
