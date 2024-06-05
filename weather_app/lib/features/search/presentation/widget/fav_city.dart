@@ -210,7 +210,20 @@ class _FavLocationState extends State<FavLocation> {
                     ],
                   ),
                 )
-              : Container(); // Return an empty container if there are no cities
+              : Row(
+  //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  children: [
+    const Spacer(), // Added Spacer widget
+    IconButton(
+      icon: const Icon(Icons.refresh, size: 20, color: Colors.white),
+      onPressed: () {
+        setState(() {
+        });
+      },
+    ),
+  ],
+);
+ // Return an empty container if there are no cities
         }
       },
     );
