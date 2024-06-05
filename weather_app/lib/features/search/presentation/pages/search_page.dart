@@ -24,11 +24,30 @@ class SearchPageState extends State<SearchPage> {
   List<dynamic> searchSuggestions = [];
   bool isSearchBarFocused = false;
   FocusNode searchFocusNode = FocusNode();
+  bool isLoading = false;
 
   @override
   void dispose() {
     searchFocusNode.dispose();
     super.dispose();
+  }
+
+  void showLoadingDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      },
+    );
+  }
+
+  void hideLoadingDialog() {
+    if (context.mounted) {
+      Navigator.of(context).pop();
+    }
   }
 
   @override
@@ -63,7 +82,7 @@ class SearchPageState extends State<SearchPage> {
                 height: MediaQuery.of(context).size.height * 0.07,
                 child: Align(
                   alignment: Alignment.topLeft,
-                  heightFactor: screenHeight *0.0011,
+                  heightFactor: screenHeight * 0.0011,
                   child: Row(
                     children: [
                       Expanded(
@@ -71,18 +90,14 @@ class SearchPageState extends State<SearchPage> {
                           backgroundColor: Colors.grey[300],
                           controller: textController,
                           onChanged: (value) async {
-                             setState(() {
-                                  // searchSuggestions = response;
-                                  isSearchBarFocused = true;
-                                });
+                            setState(() {
+                              isSearchBarFocused = true;
+                            });
                             if (value.length >= 3 && isSearchBarFocused) {
-          
                               try {
-                                final response =
-                                    await SearchApi(Dio()).fetchDataSearch(value);
+                                final response = await SearchApi(Dio()).fetchDataSearch(value);
                                 setState(() {
                                   searchSuggestions = response;
-                                  // isSearchBarFocused = true;
                                 });
                               } catch (e) {
                                 print(e);
@@ -95,8 +110,9 @@ class SearchPageState extends State<SearchPage> {
                               searchValue = value;
                             });
                             try {
-                              final response =
-                                  await WeatherGetApi(Dio()).fetchData(value);
+                              showLoadingDialog();
+                              final response = await WeatherGetApi(Dio()).fetchData(value);
+                              hideLoadingDialog();
                               if (response['location'] != null &&
                                   response['location']['name'] != null &&
                                   context.mounted) {
@@ -109,6 +125,7 @@ class SearchPageState extends State<SearchPage> {
                                 );
                               }
                             } catch (e) {
+                              hideLoadingDialog();
                               print('Error fetching weather data: $e');
                             }
                           },
@@ -117,10 +134,17 @@ class SearchPageState extends State<SearchPage> {
                       SizedBox(
                         height: 50,
                         child: Visibility(
-                          
                           visible: isSearchBarFocused,
                           child: CupertinoButton(
-                            child: const AutoSizeText(maxLines: 1,'Cancel',style:TextStyle(color:Colors.white,fontSize: 16.5,fontWeight: FontWeight.bold)),
+                            child: const AutoSizeText(
+                              maxLines: 1,
+                              'Cancel',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16.5,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                             onPressed: () {
                               setState(() {
                                 textController.clear();
@@ -137,7 +161,6 @@ class SearchPageState extends State<SearchPage> {
                 ),
               ),
               FractionallySizedBox(
-                
                 child: searchSuggestions.isNotEmpty
                     ? ListView.builder(
                         shrinkWrap: true,
@@ -147,8 +170,7 @@ class SearchPageState extends State<SearchPage> {
                           return ListTile(
                             title: AutoSizeText(
                               "${suggestion['name']}, ${suggestion['region']}, ${suggestion['country']}",
-                               maxLines:1,
-                              //  minFontSize: 5,
+                              maxLines: 1,
                               style: const TextStyle(color: Colors.white),
                             ),
                             onTap: () async {
@@ -157,10 +179,11 @@ class SearchPageState extends State<SearchPage> {
                                 searchValue = selectedValue;
                                 textController.text = selectedValue;
                               });
-          
+
                               try {
-                                final response = await WeatherGetApi(Dio())
-                                    .fetchData(selectedValue);
+                                showLoadingDialog();
+                                final response = await WeatherGetApi(Dio()).fetchData(selectedValue);
+                                hideLoadingDialog();
                                 if (response['location'] != null &&
                                     response['location']['name'] != null &&
                                     mounted) {
@@ -169,13 +192,13 @@ class SearchPageState extends State<SearchPage> {
                                       context: context,
                                       isScrollControlled: true,
                                       builder: (BuildContext context) {
-                                        return ShowWeatherModal(
-                                            response: response);
+                                        return ShowWeatherModal(response: response);
                                       },
                                     );
                                   }
                                 }
                               } catch (e) {
+                                hideLoadingDialog();
                                 print('Error fetching weather data: $e');
                               } finally {
                                 setState(() {
@@ -186,7 +209,12 @@ class SearchPageState extends State<SearchPage> {
                           );
                         },
                       )
-                    : FavCity(city:widget.city,condition: widget.condition,degree:widget.degree,image:widget.image)
+                    : FavCity(
+                        city: widget.city,
+                        condition: widget.condition,
+                        degree: widget.degree,
+                        image: widget.image,
+                      ),
               ),
             ],
           ),
@@ -195,3 +223,4 @@ class SearchPageState extends State<SearchPage> {
     );
   }
 }
+

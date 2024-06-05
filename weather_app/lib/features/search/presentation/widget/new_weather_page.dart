@@ -13,28 +13,40 @@ class NewWeatherPage extends StatefulWidget {
   NWeatherPageState createState() => NWeatherPageState();
 }
 
-class NWeatherPageState extends State<NewWeatherPage> {
+class NWeatherPageState extends State<NewWeatherPage> with WidgetsBindingObserver {
   dynamic data;
   Timer? _timer;
 
   @override
- void initState() {
-  super.initState();
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    // Your initialization code here
-    fetchDataAndShowModal();
-    setUpTimedFetch();
-  });
-}
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      fetchDataAndShowModal();
+      setUpTimedFetch();
+    });
+  }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _timer?.cancel();
     super.dispose();
   }
 
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // App is in the foreground
+      setUpTimedFetch();
+    } else if (state == AppLifecycleState.paused) {
+      // App is in the background
+      _timer?.cancel();
+    }
+  }
+
   void setUpTimedFetch() {
-    // Set up a periodic timer to fetch data every 5 seconds
+    _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
       fetchDataAndShowModal();
     });
@@ -43,15 +55,17 @@ class NWeatherPageState extends State<NewWeatherPage> {
   Future<void> fetchDataAndShowModal() async {
     try {
       // Fetch weather data for the given location
-      Map<String, dynamic> data = await WeatherGetApi(Dio()).fetchData(widget.location);
+      Map<String, dynamic> fetchedData = await WeatherGetApi(Dio()).fetchData(widget.location);
       // If valid data is returned, update the state
-      if (data['location'] != null && data['location']['name'] != null && mounted) {
+      if (fetchedData['location'] != null && fetchedData['location']['name'] != null && mounted) {
         setState(() {
-          this.data = data;
+          data = fetchedData;
         });
       }
     } catch (error) {
-      print('Error fetching weather data: $error');
+      if (mounted) {
+        print('Error fetching weather data: $error');
+      }
     }
   }
 
@@ -60,9 +74,9 @@ class NWeatherPageState extends State<NewWeatherPage> {
     return Scaffold(
       appBar: AppBar(
         iconTheme: const IconThemeData(
-          color:  Color.fromARGB(255, 255, 255, 255), // Change this to your desired color
+          color: Color.fromARGB(255, 255, 255, 255), // Change this to your desired color
         ),
-        title:const Row(
+        title: const Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(

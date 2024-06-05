@@ -1,10 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:go_router/go_router.dart';
 import 'package:weather_app/database/database_helper.dart';
-import 'package:weather_app/features/search/presentation/widget/new_weather_page.dart';
-import 'package:weather_app/features/weather/presentation/pages/weather_page_.dart';
+
 
 class CustomPopupMenu {
   Widget menu({
@@ -45,7 +43,7 @@ class CustomPopupMenu {
 }
 
 class FavLocation extends StatefulWidget {
-  const FavLocation({Key? key}) : super(key: key);
+  const FavLocation({super.key});
 
   @override
   State<FavLocation> createState() => _FavLocationState();
@@ -159,7 +157,7 @@ class _FavLocationState extends State<FavLocation> {
                                         final dynamic param = {
                                         "location": cityName.toString()
                                         };
-                                        print(param);
+                                        
                                         context.push(Uri(path:'/weather',queryParameters:param ).toString());
                                               },
                                     child: Card(

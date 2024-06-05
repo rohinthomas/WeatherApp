@@ -2,7 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:weather_app/features/search/presentation/widget/fav_city.dart';
-import 'package:weather_app/features/weather/presentation/pages/weather_page_.dart';
+
 
 class FavCity extends StatelessWidget {
   final String city;

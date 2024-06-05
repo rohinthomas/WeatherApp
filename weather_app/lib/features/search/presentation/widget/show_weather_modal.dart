@@ -6,13 +6,13 @@ import 'package:weather_app/features/weather/presentation/widget/weather_ui.dart
 class ShowWeatherModal extends StatefulWidget {
   final dynamic response;
 
-  const ShowWeatherModal({Key? key, required this.response}) : super(key: key);
+  const ShowWeatherModal({super.key, required this.response});
 
   @override
-  _ShowWeatherModalState createState() => _ShowWeatherModalState();
+  ShowWeatherModalState createState() => ShowWeatherModalState();
 }
 
-class _ShowWeatherModalState extends State<ShowWeatherModal> {
+class ShowWeatherModalState extends State<ShowWeatherModal> {
   late String locationName;
   bool isCityAdded = false;
 

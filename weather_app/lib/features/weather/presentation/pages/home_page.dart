@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:weather_app/features/search/data/api_/weather_get_api.dart';
@@ -7,7 +8,6 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dio/dio.dart';
 import 'package:weather_app/logout.dart';
 
-
 class WeatherPage extends StatefulWidget {
   const WeatherPage({super.key});
 
@@ -15,16 +15,44 @@ class WeatherPage extends StatefulWidget {
   WeatherPageState createState() => WeatherPageState();
 }
 
-class WeatherPageState extends State<WeatherPage> {
+class WeatherPageState extends State<WeatherPage> with WidgetsBindingObserver {
   dynamic data;
+  Timer? _timer;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     fetchDataAndShowModal();
+    setUpTimedFetch();
   }
 
-  void fetchDataAndShowModal() async {
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // App is in the foreground
+      setUpTimedFetch();
+    } else if (state == AppLifecycleState.paused) {
+      // App is in the background
+      _timer?.cancel();
+    }
+  }
+
+  void setUpTimedFetch() {
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      fetchDataAndShowModal();
+    });
+  }
+
+  Future<void> fetchDataAndShowModal() async {
     try {
       // Get the position asynchronously
       final position = await determinePosition();
@@ -34,21 +62,23 @@ class WeatherPageState extends State<WeatherPage> {
       String longitude = position.longitude.toString();
 
       // Fetch weather data using the obtained latitude and longitude
-      Map<String, dynamic> data =
+      Map<String, dynamic> fetchedData =
           await WeatherGetApi(Dio()).fetchData("$latitude,$longitude");
 
       // Check if the data is valid and the widget is still mounted
-      if (data['location'] != null &&
-          data['location']['name'] != null &&
-          context.mounted) {
+      if (fetchedData['location'] != null &&
+          fetchedData['location']['name'] != null &&
+          mounted) {
         // Update the state with the fetched data
         setState(() {
-          this.data = data;
+          data = fetchedData;
         });
       }
     } catch (error) {
-      // Handle error
-      print('Error fetching weather data: $error');
+      if (mounted) {
+        // Handle error only if the widget is still mounted
+        print('Error fetching weather data: $error');
+      }
     }
   }
 
@@ -67,12 +97,12 @@ class WeatherPageState extends State<WeatherPage> {
                 child: GestureDetector(
                   onTap: () {
                     if (data != null) {
-                      context.goNamed('search', pathParameters:{'cityname': data['location']['name'].toString(),
-                        'conditn':
-                            data['current']['condition']['text'].toString(),
+                      context.goNamed('search', pathParameters: {
+                        'cityname': data['location']['name'].toString(),
+                        'conditn': data['current']['condition']['text'].toString(),
                         "deg": data['current']['temp_c'].toString(),
-                        "img":
-                            data['current']['condition']['icon'].toString()});
+                        "img": data['current']['condition']['icon'].toString()
+                      });
                     } else {
                       // Handle case when data is null
                       print("null null!!!!");

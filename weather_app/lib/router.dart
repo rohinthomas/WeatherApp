@@ -23,7 +23,7 @@ final router = GoRouter(
       path: '/weather',
       builder: (context, state) {
         final queryParameters = state.uri.queryParameters;
-        print(queryParameters['location']);
+        
         return NewWeatherPage(
           location: queryParameters['location'] ?? 'Unknown City',
         );
@@ -33,7 +33,6 @@ final router = GoRouter(
       name: 'search',
       path: '/search/:cityname/:conditn/:deg/:img',
       builder: (context, state) {
-        print(state.pathParameters["cityname"]);
         return SearchPage(
           city: state.pathParameters['cityname'] ?? 'Unknown City',
           condition: state.pathParameters['conditn'] ?? 'Unknown Condition',
