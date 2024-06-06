@@ -1,9 +1,9 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
+
 import 'package:transparent_image/transparent_image.dart';
-import 'package:weather_app/app_state.dart';
+
 import 'package:weather_app/features/search/presentation/widget/fav_city.dart';
 
 
