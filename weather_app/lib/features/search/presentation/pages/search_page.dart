@@ -12,7 +12,14 @@ class SearchPage extends StatefulWidget {
   final String condition;
   final String degree;
   final String image;
-  const SearchPage({super.key,required this.city,required this.condition,required this.degree,required this.image});
+  
+  const SearchPage({
+    super.key,
+    required this.city,
+    required this.condition,
+    required this.degree,
+    required this.image,
+  });
 
   @override
   SearchPageState createState() => SearchPageState();
@@ -25,9 +32,22 @@ class SearchPageState extends State<SearchPage> {
   bool isSearchBarFocused = false;
   FocusNode searchFocusNode = FocusNode();
   bool isLoading = false;
+  String searchBarText="";
+  @override
+  void initState() {
+    super.initState();
+    searchFocusNode.addListener(_onFocusChange);
+  }
+
+  void _onFocusChange() {
+    setState(() {
+      isSearchBarFocused = searchFocusNode.hasFocus;
+    });
+  }
 
   @override
   void dispose() {
+    searchFocusNode.removeListener(_onFocusChange);
     searchFocusNode.dispose();
     super.dispose();
   }
@@ -50,10 +70,46 @@ class SearchPageState extends State<SearchPage> {
     }
   }
 
+  void onSubmit(String value) async {
+    if (value.isEmpty) {
+      isSearchBarFocused = false;
+      searchFocusNode.unfocus();
+      searchBarText="";
+      return; // Do nothing if the search field is empty
+    }
+
+    setState(() {
+      searchValue = value;
+      isSearchBarFocused = false;
+      searchFocusNode.unfocus();
+    });
+
+    try {
+      showLoadingDialog();
+      final response = await WeatherGetApi(Dio()).fetchData(value);
+      hideLoadingDialog();
+      if (response['location'] != null &&
+          response['location']['name'] != null &&
+          mounted) {
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          builder: (BuildContext context) {
+            return ShowWeatherModal(response: response);
+          },
+        );
+      }
+    } catch (e) {
+      hideLoadingDialog();
+      print('Error fetching weather data: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     var screenHeight = MediaQuery.of(context).size.height;
     double searchPaddingTop = screenHeight * 0.0015;
+    
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: const Color.fromARGB(255, 0, 0, 0),
@@ -63,166 +119,151 @@ class SearchPageState extends State<SearchPage> {
       ),
       body: SafeArea(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Flexible(
-              child: Align(
-                alignment: Alignment.topLeft,
-                heightFactor: searchPaddingTop,
-                child: const AutoSizeText(
-                  "Weather",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                  ),
+            Padding(
+              padding: EdgeInsets.only(top: searchPaddingTop),
+              child: const AutoSizeText(
+                "Weather",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
-            SizedBox(
-              height: MediaQuery.of(context).size.height * 0.07,
-              child: Align(
-                alignment: Alignment.topLeft,
-                heightFactor: screenHeight * 0.0011,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: CupertinoSearchTextField(
-                        backgroundColor: Colors.grey[300],
-                        controller: textController,
-                        onChanged: (value) async {
-                          setState(() {
-                            isSearchBarFocused = true;
-                          });
-                          if (value.length >= 3 && isSearchBarFocused) {
-                            try {
-                              final response = await SearchApi(Dio()).fetchDataSearch(value);
+            Padding(
+              padding: EdgeInsets.only(
+                  top: screenHeight * 0.02, left: 8.0, right: 8.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: CupertinoSearchTextField(
+                      backgroundColor: Colors.grey[300],
+                      controller: textController,
+                      focusNode: searchFocusNode,
+                      onChanged: (value) async {
+                        if (value.isNotEmpty && isSearchBarFocused) {
+                          try {
+                            final response =
+                                await SearchApi(Dio()).fetchDataSearch(value);
+                            setState(() {
+                              searchSuggestions = response;
+                              searchBarText=value;
+                              print(searchBarText);
+                            });
+                            if (response.isEmpty) {
                               setState(() {
-                                searchSuggestions = response;
+                                searchSuggestions = [];
                               });
-                            } catch (e) {
-                              print(e);
-                            }
-                          }
-                        },
-                        focusNode: searchFocusNode,
-                        onSubmitted: (value) async {
-                          setState(() {
-                            searchValue = value;
-                          });
-                          try {
-                            showLoadingDialog();
-                            final response = await WeatherGetApi(Dio()).fetchData(value);
-                            hideLoadingDialog();
-                            if (response['location'] != null &&
-                                response['location']['name'] != null &&
-                                context.mounted) {
-                              showModalBottomSheet(
-                                context: context,
-                                isScrollControlled: true,
-                                builder: (BuildContext context) {
-                                  return ShowWeatherModal(response: response);
-                                },
-                              );
                             }
                           } catch (e) {
-                            hideLoadingDialog();
-                            print('Error fetching weather data: $e');
+                            print(e);
                           }
-                        },
-                      ),
+                        }
+                      },
+                      onTap: () {
+                        setState(() {
+                          isSearchBarFocused = true;
+                        });
+                      },
+                      onSubmitted: onSubmit,
                     ),
-                    SizedBox(
-                      height: 50,
-                      child: Visibility(
-                        visible: isSearchBarFocused,
-                        child: CupertinoButton(
-                          child: const AutoSizeText(
-                            maxLines: 1,
-                            'Cancel',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16.5,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              textController.clear();
-                              searchSuggestions.clear();
-                              isSearchBarFocused = false;
-                              searchFocusNode.unfocus();
-                            });
-                          },
+                  ),
+                  Visibility(
+                    visible: isSearchBarFocused,
+                    child: CupertinoButton(
+                      child: const AutoSizeText(
+                        'Cancel',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16.5,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
+                      onPressed: () {
+                        setState(() {
+                          textController.clear();
+                          searchSuggestions.clear();
+                          isSearchBarFocused = false;
+                          searchFocusNode.unfocus();
+                          searchBarText="";
+                        });
+                      },
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-            searchSuggestions.isNotEmpty
-                ? ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: searchSuggestions.length,
-                    itemBuilder: (context, index) {
-                      final suggestion = searchSuggestions[index];
-                      return ListTile(
-                        title: AutoSizeText(
-                          "${suggestion['name']}, ${suggestion['region']}, ${suggestion['country']}",
-                          maxLines: 1,
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        onTap: () async {
-                          String selectedValue = suggestion['name'];
-                          setState(() {
-                            searchValue = selectedValue;
-                            textController.text = selectedValue;
-                          });
-                    
-                          try {
-                            showLoadingDialog();
-                            final response = await WeatherGetApi(Dio()).fetchData(selectedValue);
-                            hideLoadingDialog();
-                            if (response['location'] != null &&
-                                response['location']['name'] != null &&
-                                mounted) {
-                              if (context.mounted) {
-                                showModalBottomSheet(
-                                  context: context,
-                                  isScrollControlled: true,
-                                  builder: (BuildContext context) {
-                                    return ShowWeatherModal(response: response);
-                                  },
-                                );
-                              }
-                            }
-                          } catch (e) {
-                            hideLoadingDialog();
-                            print('Error fetching weather data: $e');
-                          } finally {
+            Expanded(
+              child: searchSuggestions.isNotEmpty
+                  ? ListView.builder(
+                      itemCount: searchSuggestions.length,
+                      itemBuilder: (context, index) {
+                        final suggestion = searchSuggestions[index];
+                        return ListTile(
+                          title: AutoSizeText(
+                            "${suggestion['name']}, ${suggestion['region']}, ${suggestion['country']}",
+                            maxLines: 2,
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                          onTap: () async {
+                            String selectedValue = suggestion['name'];
                             setState(() {
-                              searchSuggestions.clear();
+                              searchValue = selectedValue;
+                              textController.text = selectedValue;
                             });
-                          }
-                        },
-                      );
-                    },
-                  )
-                : FractionallySizedBox(
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.vertical,
-                    child: FavCity(
-                        city: widget.city,
-                        condition: widget.condition,
-                        degree: widget.degree,
-                        image: widget.image,
-                      ),
-                  ),
-                ),
+
+                            try {
+                              showLoadingDialog();
+                              final response = await WeatherGetApi(Dio())
+                                  .fetchData(selectedValue);
+                              hideLoadingDialog();
+                              if (response['location'] != null &&
+                                  response['location']['name'] != null &&
+                                  mounted) {
+                                if (context.mounted) {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    builder: (BuildContext context) {
+                                      return ShowWeatherModal(
+                                          response: response);
+                                    },
+                                  );
+                                }
+                              }
+                            } catch (e) {
+                              hideLoadingDialog();
+                              print('Error fetching weather data: $e');
+                            } finally {
+                              setState(() {
+                                searchSuggestions.clear();
+                              });
+                            }
+                          },
+                        );
+                      },
+                    )
+                  : SingleChildScrollView(
+                      child: searchBarText.isNotEmpty
+                          ?  Center(
+                            child: Text(
+                                "No city found",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                          )
+                          : FavCity(
+                              city: widget.city,
+                              condition: widget.condition,
+                              degree: widget.degree,
+                              image: widget.image,
+                            ),
+                    ),
+            ),
           ],
         ),
       ),
     );
   }
 }
-

@@ -143,7 +143,7 @@ class _FavLocationState extends State<FavLocation> {
                           child: ListView.builder(
                             shrinkWrap: true,
                             itemCount: citiesFromDB.length,
-                            scrollDirection: Axis.vertical,
+                            physics: const NeverScrollableScrollPhysics(),         
                             itemBuilder: (context, index) {
                               final cityName = citiesFromDB[index]['name'] as String;
                               debugPrint(cityName);
