@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import 'package:weather_app/router.dart';
 import 'firebase_options.dart';
+import 'app_state.dart'; // Make sure to import the AppState class
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,7 +17,12 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]);
 
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => AppState(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

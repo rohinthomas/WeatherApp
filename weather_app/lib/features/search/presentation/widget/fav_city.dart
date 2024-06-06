@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:weather_app/app_state.dart';
 import 'package:weather_app/database/database_helper.dart';
 
 
@@ -43,31 +45,32 @@ class CustomPopupMenu {
 }
 
 class FavLocation extends StatefulWidget {
-  const FavLocation({super.key});
+  const FavLocation({Key? key}) : super(key: key);
 
   @override
   State<FavLocation> createState() => _FavLocationState();
 }
 
 class _FavLocationState extends State<FavLocation> {
-  final DatabaseHelper _databaseHelper = DatabaseHelper(); // Instance of DatabaseHelper
-  bool _isEditMode = false; // Track if the edit mode is active
+  final DatabaseHelper _databaseHelper = DatabaseHelper();
+  bool _isEditMode = false;
   final CustomPopupMenu customPopupMenu = CustomPopupMenu();
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Map<String, dynamic>>>(
-      future: _databaseHelper.getCities(), // Fetch cities from the database
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else {
-          final citiesFromDB = snapshot.data!;
-          return citiesFromDB.isNotEmpty
-              ? FractionallySizedBox(
-                  child: Column(
+    return Consumer<AppState>(
+      builder: (context, appState, _) {
+        return FutureBuilder<List<Map<String, dynamic>>>(
+          future: _databaseHelper.getCities(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else {
+              final citiesFromDB = snapshot.data!;
+              return citiesFromDB.isNotEmpty
+                  ? Column(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     mainAxisSize: MainAxisSize.max,
                     children: [
@@ -148,18 +151,11 @@ class _FavLocationState extends State<FavLocation> {
                                 children: [
                                   InkWell(
                                     onTap: () {
-                                      // Navigator.pushReplacement(
-                                      //   context,
-                                      //   MaterialPageRoute(
-                                      //     builder: (context) => NewWeatherPage(location: cityName),
-                                      //   ),
-                                      // );
-                                        final dynamic param = {
+                                      final dynamic param = {
                                         "location": cityName.toString()
-                                        };
-                                        
-                                        context.push(Uri(path:'/weather',queryParameters:param ).toString());
-                                              },
+                                      };
+                                      context.push(Uri(path:'/weather',queryParameters:param ).toString());
+                                    },
                                     child: Card(
                                       color: const Color.fromARGB(53, 32, 32, 32),
                                       child: SizedBox(
@@ -208,23 +204,11 @@ class _FavLocationState extends State<FavLocation> {
                         ),
                       ),
                     ],
-                  ),
-                )
-              : Row(
-  //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  children: [
-    const Spacer(), // Added Spacer widget
-    IconButton(
-      icon: const Icon(Icons.refresh, size: 20, color: Colors.white),
-      onPressed: () {
-        setState(() {
-        });
-      },
-    ),
-  ],
-);
- // Return an empty container if there are no cities
-        }
+                  )
+                  : Container();
+            }
+          },
+        );
       },
     );
   }
@@ -237,4 +221,3 @@ class _FavLocationState extends State<FavLocation> {
     setState(() {});
   }
 }
-

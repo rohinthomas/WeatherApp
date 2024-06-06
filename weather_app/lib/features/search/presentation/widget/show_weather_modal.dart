@@ -1,5 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:weather_app/app_state.dart';
 import 'package:weather_app/database/database_helper.dart';
 import 'package:weather_app/features/weather/presentation/widget/weather_ui.dart';
 
@@ -36,6 +38,9 @@ class ShowWeatherModalState extends State<ShowWeatherModal> {
     setState(() {
       isCityAdded = true;
     });
+    if(mounted){
+    context.read<AppState>().updateCity(locationName);
+    }
   }
 
   @override
@@ -86,7 +91,15 @@ class ShowWeatherModalState extends State<ShowWeatherModal> {
                   ),
                 ],
               ),
-              Expanded(child: WeatherUi(response: widget.response)),
+              Expanded(
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Column(
+                    children: [
+                      WeatherUi(response: widget.response),
+                    ],
+                  )),
+              ),
             ],
           ),
         ),
