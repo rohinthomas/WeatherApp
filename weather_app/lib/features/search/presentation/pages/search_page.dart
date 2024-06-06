@@ -37,6 +37,14 @@ class SearchPageState extends State<SearchPage> {
   void initState() {
     super.initState();
     searchFocusNode.addListener(_onFocusChange);
+    textController.addListener(() {
+    if (textController.text.isEmpty) {
+      setState(() {
+        searchBarText = "";
+        searchSuggestions = [];
+      });
+    }
+  });
   }
 
   void _onFocusChange() {
@@ -80,8 +88,6 @@ class SearchPageState extends State<SearchPage> {
 
     setState(() {
       searchValue = value;
-      isSearchBarFocused = false;
-      searchFocusNode.unfocus();
     });
 
     try {
@@ -168,6 +174,7 @@ class SearchPageState extends State<SearchPage> {
                         });
                       },
                       onSubmitted: onSubmit,
+                      
                     ),
                   ),
                   Visibility(
@@ -246,8 +253,8 @@ class SearchPageState extends State<SearchPage> {
                       },
                     )
                   : SingleChildScrollView(
-                      child: searchBarText.isNotEmpty
-                          ?  Center(
+                      child: searchBarText.isNotEmpty && searchSuggestions.isEmpty
+                          ?  const Center(
                             child: Text(
                                 "No city found",
                                 style: TextStyle(color: Colors.white),
