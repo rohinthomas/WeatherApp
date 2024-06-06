@@ -216,10 +216,10 @@ class SearchPageState extends State<SearchPage> {
                           ),
                           onTap: () async {
                             String selectedValue = suggestion['name'];
-                            setState(() {
-                              searchValue = selectedValue;
-                              textController.text = selectedValue;
-                            });
+                            // setState(() {
+                            //   searchValue = selectedValue;
+                            //   textController.text = selectedValue;
+                            // });
 
                             try {
                               showLoadingDialog();
@@ -243,11 +243,7 @@ class SearchPageState extends State<SearchPage> {
                             } catch (e) {
                               hideLoadingDialog();
                               print('Error fetching weather data: $e');
-                            } finally {
-                              setState(() {
-                                searchSuggestions.clear();
-                              });
-                            }
+                            } 
                           },
                         );
                       },
