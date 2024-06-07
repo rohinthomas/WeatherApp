@@ -20,7 +20,7 @@ class WeatherUi extends StatelessWidget {
     var screenWidth = MediaQuery.of(context).size.width;
     var screenHeight = MediaQuery.of(context).size.height;
     double timeLogoSize = screenWidth * 0.04;
-
+    final String city="${response['location']['name']}";
     // Helper function to get weather condition image path
     String getWeatherCondition(String conditionCode) {
       switch (conditionCode) {
@@ -137,7 +137,7 @@ class WeatherUi extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         AutoSizeText(
-          response['location']['name'] ?? 'Unknown Location',
+          city ?? 'Unknown Location',
           maxLines: 1,
           style: const TextStyle(
               color: Colors.white, fontSize: 30, fontWeight: FontWeight.w700),
@@ -172,7 +172,9 @@ class WeatherUi extends StatelessWidget {
                     height: screenWidth * 0.45,
                   ),
                   Card(
-                    color: const Color.fromARGB(53, 32, 32, 32),
+                    color: const Color.fromARGB(255, 33, 33, 33),
+
+
                     child: SizedBox(
                       width: screenWidth * 0.9,
                       height: screenHeight * 0.2,
@@ -212,7 +214,8 @@ class WeatherUi extends StatelessWidget {
                   ),
                   // 3 day weather forecast
                   Card(
-                    color: const Color.fromARGB(53, 32, 32, 32),
+                    color: const Color.fromARGB(255, 33, 33, 33),
+
                     child: SizedBox(
                       width: screenWidth * 0.9,
                       height: screenHeight * 0.3,
@@ -255,7 +258,8 @@ class WeatherUi extends StatelessWidget {
                       
                       children: [
                         Card(
-                          color: const Color.fromARGB(53, 32, 32, 32),
+                          color: Color.fromARGB(255, 33, 33, 33),
+
                           child: SizedBox(
                             width: screenWidth * 0.3133,
                             height: screenHeight * 0.165,
@@ -304,7 +308,8 @@ class WeatherUi extends StatelessWidget {
                         ),
                         //himidity
                         Card(
-                          color: const Color.fromARGB(53, 32, 32, 32),
+                          color: Color.fromARGB(255, 33, 33, 33),
+
                           child: SizedBox(
                             width: screenWidth * 0.3133,
                             height: screenHeight * 0.165,
@@ -353,7 +358,8 @@ class WeatherUi extends StatelessWidget {
                         ),
                         //feels like
                         Card(
-                          color: const Color.fromARGB(53, 32, 32, 32),
+                          color: Color.fromARGB(255, 33, 33, 33),
+
                           child: SizedBox(
                             width: screenWidth * 0.3094,
                             height: screenHeight * 0.165,
@@ -403,7 +409,8 @@ class WeatherUi extends StatelessWidget {
                     ),
                   ),
                   Card(
-                    color: const Color.fromARGB(53, 32, 32, 32),
+                    color: Color.fromARGB(255, 33, 33, 33),
+
                     child: SizedBox(
                       width: screenWidth * 0133,
                       height: screenHeight * 0.14,
@@ -568,7 +575,8 @@ class WeatherUi extends StatelessWidget {
                   Row(
                     children: [
                       Card(
-                        color: const Color.fromARGB(53, 32, 32, 32),
+                        color: Color.fromARGB(255, 33, 33, 33),
+
                         child: SizedBox(
                           width: screenWidth * 0.48,
                           height: screenHeight * 0.16,
@@ -616,7 +624,8 @@ class WeatherUi extends StatelessWidget {
                       ),
                       //himidity
                       Card(
-                        color: const Color.fromARGB(53, 32, 32, 32),
+                        color: Color.fromARGB(255, 33, 33, 33),
+
                         child: SizedBox(
                           width: screenWidth * 0.475,
                           height: screenHeight * 0.16,
