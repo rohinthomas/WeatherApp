@@ -35,7 +35,8 @@ class FavCity extends StatelessWidget {
                     context.go("/");
                   },
                   child: Card(
-                      color: const Color.fromARGB(53, 32, 32, 32),
+                      color: Color.fromARGB(255, 33, 33, 33),
+
                       child: SizedBox(
                           width: screenWidth * 1,
                           height: screenHeight * 0.17,

@@ -19,7 +19,8 @@ class CustomPopupMenu {
       tooltip: '',
       elevation: 8,
       padding: EdgeInsets.zero,
-      color: const Color.fromARGB(53, 32, 32, 32), // Set the popup menu color
+      color: Color.fromARGB(255, 33, 33, 33),
+ // Set the popup menu color
       itemBuilder: itemBuilder,
     );
   }
@@ -157,7 +158,8 @@ class _FavLocationState extends State<FavLocation> {
                                       context.push(Uri(path:'/weather',queryParameters:param ).toString());
                                     },
                                     child: Card(
-                                      color: const Color.fromARGB(53, 32, 32, 32),
+                                      color: Color.fromARGB(255, 33, 33, 33),
+
                                       child: SizedBox(
                                         child: Row(
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
