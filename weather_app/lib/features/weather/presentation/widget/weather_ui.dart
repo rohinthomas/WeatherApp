@@ -48,6 +48,7 @@ class WeatherUi extends StatelessWidget {
         case '1240':
         case '1243':
         case '1249':
+        case '1063':
         case '1252': // rain
           return "images/rain.png";
         case '1066':
@@ -74,7 +75,7 @@ class WeatherUi extends StatelessWidget {
           return "images/heavy_rain_and_thunder.png";
         // Add more cases for other weather conditions if needed
         default:
-          return "images/unknown_weather.png";
+          return "images/logo.png";
       }
     }
 

@@ -216,7 +216,6 @@ class SearchPageState extends State<SearchPage> {
                           ),
                           onTap: () async {
                             String selectedValue = "${suggestion['name']},${suggestion['region']}, ${suggestion['country']}";
-                            print(selectedValue);
                             // setState(() {
                             //   searchValue = selectedValue;
                             //   textController.text = selectedValue;
