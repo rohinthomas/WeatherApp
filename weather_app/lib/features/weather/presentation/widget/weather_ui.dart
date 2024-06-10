@@ -138,7 +138,7 @@ class WeatherUi extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         AutoSizeText(
-          city ?? 'Unknown Location',
+          city,
           maxLines: 1,
           style: const TextStyle(
               color: Colors.white, fontSize: 30, fontWeight: FontWeight.w700),

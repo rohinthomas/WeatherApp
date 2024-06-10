@@ -169,14 +169,17 @@ class _FavLocationState extends State<FavLocation> {
                                               child: Column(
                                                 crossAxisAlignment: CrossAxisAlignment.start,
                                                 children: [
-                                                  AutoSizeText(
-                                                    cityName,
-                                                    maxLines: 1,
-                                                    minFontSize: 5,
-                                                    style: const TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 18,
-                                                      fontWeight: FontWeight.w700,
+                                                  SingleChildScrollView(
+                                                    scrollDirection: Axis.horizontal,
+                                                    child: AutoSizeText(
+                                                      cityName,
+                                                      maxLines: 1,
+                                                      minFontSize: 2,
+                                                      style: const TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 18,
+                                                        fontWeight: FontWeight.w700,
+                                                      ),
                                                     ),
                                                   ),
                                                 ],

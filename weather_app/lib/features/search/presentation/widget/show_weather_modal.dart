@@ -21,7 +21,7 @@ class ShowWeatherModalState extends State<ShowWeatherModal> {
   @override
   void initState() {
     super.initState();
-    locationName = "${widget.response['location']['name']},${widget.response['location']['country']}";
+    locationName = "${widget.response['location']['name']},${widget.response['location']['region']},${widget.response['location']['country']}";
     _checkIfCityAlreadyAdded();
   }
 
