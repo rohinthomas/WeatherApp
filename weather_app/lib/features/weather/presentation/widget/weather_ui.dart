@@ -259,7 +259,7 @@ class WeatherUi extends StatelessWidget {
                       
                       children: [
                         Card(
-                          color: Color.fromARGB(255, 33, 33, 33),
+                          color: const Color.fromARGB(255, 33, 33, 33),
 
                           child: SizedBox(
                             width: screenWidth * 0.3133,
@@ -309,7 +309,7 @@ class WeatherUi extends StatelessWidget {
                         ),
                         //himidity
                         Card(
-                          color: Color.fromARGB(255, 33, 33, 33),
+                          color: const Color.fromARGB(255, 33, 33, 33),
 
                           child: SizedBox(
                             width: screenWidth * 0.3133,
@@ -359,7 +359,7 @@ class WeatherUi extends StatelessWidget {
                         ),
                         //feels like
                         Card(
-                          color: Color.fromARGB(255, 33, 33, 33),
+                          color: const Color.fromARGB(255, 33, 33, 33),
 
                           child: SizedBox(
                             width: screenWidth * 0.3094,
@@ -410,7 +410,7 @@ class WeatherUi extends StatelessWidget {
                     ),
                   ),
                   Card(
-                    color: Color.fromARGB(255, 33, 33, 33),
+                    color: const Color.fromARGB(255, 33, 33, 33),
 
                     child: SizedBox(
                       width: screenWidth * 0133,
@@ -576,7 +576,7 @@ class WeatherUi extends StatelessWidget {
                   Row(
                     children: [
                       Card(
-                        color: Color.fromARGB(255, 33, 33, 33),
+                        color: const Color.fromARGB(255, 33, 33, 33),
 
                         child: SizedBox(
                           width: screenWidth * 0.48,
@@ -625,7 +625,7 @@ class WeatherUi extends StatelessWidget {
                       ),
                       //himidity
                       Card(
-                        color: Color.fromARGB(255, 33, 33, 33),
+                        color: const Color.fromARGB(255, 33, 33, 33),
 
                         child: SizedBox(
                           width: screenWidth * 0.475,

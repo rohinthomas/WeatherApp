@@ -19,7 +19,7 @@ class CustomPopupMenu {
       tooltip: '',
       elevation: 8,
       padding: EdgeInsets.zero,
-      color: Color.fromARGB(255, 33, 33, 33),
+      color: const Color.fromARGB(255, 33, 33, 33),
  // Set the popup menu color
       itemBuilder: itemBuilder,
     );
@@ -46,7 +46,7 @@ class CustomPopupMenu {
 }
 
 class FavLocation extends StatefulWidget {
-  const FavLocation({Key? key}) : super(key: key);
+  const FavLocation({super.key});
 
   @override
   State<FavLocation> createState() => _FavLocationState();
@@ -158,7 +158,7 @@ class _FavLocationState extends State<FavLocation> {
                                       context.push(Uri(path:'/weather',queryParameters:param ).toString());
                                     },
                                     child: Card(
-                                      color: Color.fromARGB(255, 33, 33, 33),
+                                      color: const Color.fromARGB(255, 33, 33, 33),
 
                                       child: SizedBox(
                                         child: Row(
